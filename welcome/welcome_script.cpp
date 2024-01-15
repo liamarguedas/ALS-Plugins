@@ -21,13 +21,9 @@ public Action:Event_PlayerSpawn(Handle:event, const String:name[], bool:dontBroa
     
     if (IsClientInGame(client) && !IsFakeClient(client))
     {
-        PrintToChat(client, "Se inscreve no canal: youtube.com/@servidoralsbr");
-        PrintToChat(client, "Se inscreve no canal: youtube.com/@servidoralsbr");
-        PrintToChat(client, "Se inscreve no canal: youtube.com/@servidoralsbr");
-        PrintToChat(client, "Se inscreve no canal: youtube.com/@servidoralsbr");
-        PrintToChat(client, "Se inscreve no canal: youtube.com/@servidoralsbr");
-        PrintToChat(client, "Se inscreve no canal: youtube.com/@servidoralsbr");
-        PrintToChat(client, "Se inscreve no canal: youtube.com/@servidoralsbr");
+        for(int i = 0; i<6; i++) {
+          PrintToChat(client, "Se inscreve no canal: youtube.com/@servidoralsbr");
+        }  
     }
     return Plugin_Continue;
 }
