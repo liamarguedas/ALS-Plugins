@@ -3,11 +3,11 @@
 #include <clientprefs>
 
 public Plugin:myinfo = {
-    name = "Welcome Message",
-    author = "Your Name",
-    description = "Displays a welcome message to users when they join the server.",
+    name = "mensagem_bemvinda",
+    author = "liano",
+    description = "_",
     version = "1.1",
-    url = "http://yourwebsite.com"
+    url = "teste.com"
 };
 
 public void OnPluginStart() {
@@ -27,7 +27,7 @@ public void Event_ClientPutInServer(int client) {
     GetClientName(client, playerName, sizeof(playerName));
     
     char message[256];
-    Format(message, sizeof(message), "Welcome to the server, %s!", playerName);
+    Format(message, sizeof(message), "bem-vindo, %s!", playerName);
     
     PrintToChat(client, "%s", message);
 }
