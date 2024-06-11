@@ -1,3 +1,4 @@
+
 #include <sourcemod>
 #include <sdktools>
 
@@ -14,7 +15,7 @@ public Plugin myinfo = {
 new Handle:g_PauseMenu;
 new bool:g_PauseVotes[MAXPLAYERS + 1];
 new int:g_VoteCount;
-new Float:g_RoundStartTime;
+new float:g_RoundStartTime;
 new bool:g_IsPaused;
 
 public OnPluginStart() {
@@ -28,7 +29,7 @@ public OnPluginStart() {
     HookEvent("round_start", Event_RoundStart);
 }
 
-public Action:Command_Pause(client, args) {
+public Action:Command_Pause(int client, int args) {
     if (!IsPlayerAlive(client) || !IsBuyTime()) {
         PrintToChat(client, "You can only request a pause during buy time.");
         return Plugin_Handled;
@@ -45,7 +46,7 @@ public Action:Command_Pause(client, args) {
     return Plugin_Handled;
 }
 
-public Action:Command_Unpause(client, args) {
+public Action:Command_Unpause(int client, int args) {
     if (g_IsPaused) {
         UnpauseGame();
     } else {
@@ -76,8 +77,8 @@ public void PauseGame() {
 
     for (int i = 1; i <= MaxClients; i++) {
         if (IsClientInGame(i)) {
-            new userId = GetClientUserId(i);
-            FakeClientCommandEx(client, "cs_freeze %d", userId);
+            int userId = GetClientUserId(i);
+            FakeClientCommandEx(i, "cs_freeze %d", userId);
         }
     }
 }
@@ -88,14 +89,14 @@ public void UnpauseGame() {
 
     for (int i = 1; i <= MaxClients; i++) {
         if (IsClientInGame(i)) {
-            new userId = GetClientUserId(i);
-            FakeClientCommandEx(client, "cs_unfreeze %d", userId);
+            int userId = GetClientUserId(i);
+            FakeClientCommandEx(i, "cs_unfreeze %d", userId);
         }
     }
 }
 
 bool:IsBuyTime() {
-    new Float:currentTime = GetGameTime();
+    float currentTime = GetGameTime();
     if (currentTime - g_RoundStartTime <= 15.0) {
         return true;
     }
@@ -109,5 +110,4 @@ public void Event_RoundStart(Handle:event, const String:name[], bool:dontBroadca
     }
     g_VoteCount = 0;
 }
-
 
