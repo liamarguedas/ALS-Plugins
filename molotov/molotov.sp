@@ -41,7 +41,6 @@ new bool:lanzando[MAXPLAYERS+1] = {false, ...};
 #define EXPLODE_SOUND	"physics/glass/glass_bottle_impact_hard3.wav"
 #define EXPLODE_SOUND2	"ambient/fire/mtov_flame2.wav"
 
-new Handle:g_PlayerFlashbangs[MAXPLAYERS+1];
 new Handle:cvar_ignite = INVALID_HANDLE;
 new Handle:cvar_ignite_time = INVALID_HANDLE;
 new Handle:cvar_damage = INVALID_HANDLE;
