@@ -1,3 +1,4 @@
+
 /*  SM CSS Molotov Cocktails
  *
  *  Copyright (C) 2017 Francisco 'Franc1sco' García
@@ -27,7 +28,6 @@
 //#include <lastrequest>
 
 
-#include <cssthrowingknives>
 #define REQUIRE_PLUGIN
 
 
@@ -51,11 +51,14 @@ new Handle:cvar_msg = INVALID_HANDLE;
 
 new Handle:hBuyZone = INVALID_HANDLE;
 new Handle:preciomolotov = INVALID_HANDLE;
+new Handle:g_MoloMenu;
 
 new molotovnumero[MAXPLAYERS+1];
 
 new Handle:g_CVarAdmFlag;
 new g_AdmFlag;
+
+new MolosAtivas[MAXPLAYERS+1];
 
 
 public Plugin:myinfo =
@@ -67,8 +70,33 @@ public Plugin:myinfo =
 	url = "http://steamcommunity.com/id/franug"
 };
 
+public int MoloMenuHandle(Menu menu, MenuAction action, int client, int item) {
+    if (action == MenuAction_End) {
+        return 0;
+        
+    } else if (action == MenuAction_Select) {
+        if (item == 0) {
+        	PrintToChat(client, "Molotovs ativadas.");
+            MolosAtivas[client] = true;
+        } else if (item == 1) {
+        	PrintToChat(client, "Molotovs desativadas.");
+      		MolosAtivas[client] = false;
+      	}
+     	}
+     	
+    return 0;
+}
+
 public OnPluginStart()
 {
+	
+	g_MoloMenu = CreateMenu(MoloMenuHandle);
+    SetMenuTitle(g_MoloMenu, "Ativar molotovs?");
+    AddMenuItem(g_MoloMenu, "yes", "Yes");
+    AddMenuItem(g_MoloMenu, "no", "No");
+    
+    RegConsoleCmd("sm_molotov", Command_Molotov);
+    
 	CreateConVar("sm_cssmolotov_version", "v2.1", _, FCVAR_PLUGIN|FCVAR_NOTIFY|FCVAR_DONTRECORD);
 
 	cvar_ignite = CreateConVar("sm_cssmolotov_ignite", "1", "Enable/Disable ignite player");
@@ -88,7 +116,6 @@ public OnPluginStart()
 	preciomolotov = CreateConVar("sm_cssmolotov_price", "0", "Price to buy a molotov, 0 for free");
 
 
-
 	HookEvent("player_spawn", Event_PlayerSpawn);
 
 	RegConsoleCmd("sm_buymolotov", Comprar);
@@ -99,6 +126,14 @@ public OnPluginStart()
 	
 
 }
+
+public Action:Command_Molotov(client, args) {
+	
+	DisplayMenu(g_MoloMenu, client, 10);
+           
+    return Plugin_Handled;
+}
+
 
 public CVarChange(Handle:convar, const String:oldValue[], const String:newValue[]) {
 
@@ -121,7 +156,11 @@ public Event_PlayerSpawn(Handle:event, const String:name[], bool:dontBroadcast)
 
 public Action:Comprar(client, argc)
 {
-
+		if (!MolosAtivas[client])
+		{
+			return Plugin_Handled;		
+		}
+		
 		if(client == 0)
 			return Plugin_Continue;
 
@@ -138,6 +177,9 @@ public Action:Comprar(client, argc)
 			PrintToChat(client, "\x04[SM_CSSMolotov]\x05 You aren't in a buyzone");
 			return Plugin_Handled;
 		}
+		
+		
+		
 		else
 		{
 			new dinero = GetEntProp(client, Prop_Send, "m_iAccount");
@@ -178,8 +220,12 @@ public OnEntityCreated(entity, const String:classname[])
 
 public ProjectileSpawned(entity)
 {
-
 	new client = GetEntPropEnt(entity, Prop_Send, "m_hOwnerEntity");
+	
+if (!MolosAtivas[client])
+		{
+			return Plugin_Handled;		
+		}
 
 #if defined _cssthrowingknives_included_
 
@@ -196,7 +242,7 @@ public ProjectileSpawned(entity)
 
 #endif
 
-	if(0 >= molotovnumero[client])
+	if(0 >= molotovnumero[client] || !MolosAtivas[client])
 		return;
 
 	molotovnumero[client]--;
@@ -318,4 +364,5 @@ public Action:Pasado(Handle:timer, any:client)
 }
 
 #endif
+
 
